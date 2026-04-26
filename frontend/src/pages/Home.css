@@ -68,6 +68,45 @@
     animation: slideUp 1.2s ease-out forwards;
 }
 
+.role-entry-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+    gap: 1rem;
+    width: 100%;
+    max-width: 640px;
+}
+
+.role-entry-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    border-radius: 1rem;
+    padding: 1rem;
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid var(--border-color);
+    transition: transform 180ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 180ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.role-entry-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.role-entry-card p {
+    margin: 0.25rem 0 0;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.role-patient {
+    background: linear-gradient(145deg, #eff6ff, #dbeafe);
+}
+
+.role-nurse {
+    background: linear-gradient(145deg, #ecfdf5, #d1fae5);
+}
+
 /* Hero Visual Mockup */
 .hero-visual {
     flex: 1;
@@ -306,6 +345,11 @@
 
     .hero-actions {
         justify-content: center;
+    }
+
+    .role-entry-grid {
+        grid-template-columns: 1fr;
+        max-width: 420px;
     }
 
     .features-grid {

@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { AppContext } from '../App';
-import { FileText, Camera, ScanLine, Clock, ArrowRight, HeartPulse, ShieldCheck } from 'lucide-react';
+import { FileText, Camera, ScanLine, Clock, ArrowRight, HeartPulse, ShieldCheck, UserRound, Stethoscope } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import './Home.css';
 
@@ -24,13 +24,32 @@ const Home = () => {
 
                     <div className="hero-actions">
                         {!user ? (
-                            <Link to="/role-selection" className="btn btn-primary hero-btn">
-                                {t('home.get_started')} <ArrowRight size={20} />
-                            </Link>
+                            <div className="role-entry-grid">
+                                <Link to="/login?mode=register&role=patient" className="role-entry-card role-patient">
+                                    <UserRound size={24} />
+                                    <div>
+                                        <strong>Continue as Patient</strong>
+                                        <p>Book doctor slots and receive medicine alerts.</p>
+                                    </div>
+                                </Link>
+                                <Link to="/login?mode=register&role=nurse" className="role-entry-card role-nurse">
+                                    <Stethoscope size={24} />
+                                    <div>
+                                        <strong>Continue as Nurse</strong>
+                                        <p>Manage bookings, medicines, and billing.</p>
+                                    </div>
+                                </Link>
+                            </div>
                         ) : (
-                            <Link to="/upload" className="btn btn-primary hero-btn" onMouseEnter={() => speakText(t('home.scan_new'))}>
-                                <Camera size={20} /> {t('home.scan_new')}
-                            </Link>
+                            user.role === 'nurse' ? (
+                                <Link to="/nurse/dashboard" className="btn btn-primary hero-btn" onMouseEnter={() => speakText('Open nurse dashboard')}>
+                                    <Stethoscope size={20} /> Open Nurse Dashboard
+                                </Link>
+                            ) : (
+                                <Link to="/upload" className="btn btn-primary hero-btn" onMouseEnter={() => speakText(t('home.scan_new'))}>
+                                    <Camera size={20} /> {t('home.scan_new')}
+                                </Link>
+                            )
                         )}
                     </div>
                 </div>

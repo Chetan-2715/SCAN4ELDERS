@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Eye, EarOff } from 'lucide-react';
+import { UserRound, Stethoscope, EarOff } from 'lucide-react';
 import { AppContext } from '../App';
 
 const RoleSelection = () => {
@@ -20,13 +20,13 @@ const RoleSelection = () => {
                 fontSize: '2.5rem', fontWeight: 800,
                 marginBottom: '3rem', color: 'var(--text-main)', textAlign: 'center',
             }}>
-                Select Your Profile
+                Select Your Role
             </h1>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%', maxWidth: '500px' }}>
                 <button
-                    onClick={() => { speak("Going to login page"); setTimeout(() => navigate('/login'), 500); }}
-                    onMouseEnter={() => speak("Sighted Person button")}
+                    onClick={() => { speak("Continue as patient"); setTimeout(() => navigate('/login?mode=register&role=patient'), 300); }}
+                    onMouseEnter={() => speak("Patient role")}
                     style={{
                         display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1.5rem',
                         padding: '2rem', borderRadius: '1.5rem', border: 'none', cursor: 'pointer',
@@ -37,13 +37,30 @@ const RoleSelection = () => {
                     onMouseOver={e => e.currentTarget.style.transform = 'scale(1.03)'}
                     onMouseOut={e => e.currentTarget.style.transform = 'none'}
                 >
-                    <Eye size={48} />
-                    <span>Sighted Person</span>
+                    <UserRound size={48} />
+                    <span>Patient</span>
                 </button>
 
                 <button
-                    onClick={() => { speak("Going to voice assistant"); setTimeout(() => navigate('/blind-assistant'), 500); }}
-                    onMouseEnter={() => speak("Blind Person button")}
+                    onClick={() => { speak("Continue as nurse"); setTimeout(() => navigate('/login?mode=register&role=nurse'), 300); }}
+                    onMouseEnter={() => speak("Nurse role")}
+                    style={{
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1.5rem',
+                        padding: '2rem', borderRadius: '1.5rem', border: 'none', cursor: 'pointer',
+                        background: 'linear-gradient(135deg, #10b981, #047857)', color: 'white',
+                        fontSize: '1.5rem', fontWeight: 700, boxShadow: '0 8px 30px rgba(109,40,217,0.3)',
+                        transition: 'transform 0.2s',
+                    }}
+                    onMouseOver={e => e.currentTarget.style.transform = 'scale(1.03)'}
+                    onMouseOut={e => e.currentTarget.style.transform = 'none'}
+                >
+                    <Stethoscope size={48} />
+                    <span>Nurse</span>
+                </button>
+
+                <button
+                    onClick={() => { speak("Going to voice assistant"); setTimeout(() => navigate('/blind-assistant'), 300); }}
+                    onMouseEnter={() => speak("Blind assistant")}
                     style={{
                         display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1.5rem',
                         padding: '2rem', borderRadius: '1.5rem', border: 'none', cursor: 'pointer',
@@ -55,7 +72,7 @@ const RoleSelection = () => {
                     onMouseOut={e => e.currentTarget.style.transform = 'none'}
                 >
                     <EarOff size={48} />
-                    <span>Blind Person</span>
+                    <span>Blind Assistant</span>
                 </button>
             </div>
         </div>

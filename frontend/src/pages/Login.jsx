@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { AppContext } from '../App';
 import { authAPI } from '../services/api';
 import { User, Lock, Mail, Phone, AlertTriangle, Globe } from 'lucide-react';
@@ -13,8 +13,12 @@ const LANGUAGES = [
 ];
 
 const Login = () => {
+    const [searchParams] = useSearchParams();
+    const initialMode = searchParams.get('mode') === 'register' ? false : true;
+    const initialRole = searchParams.get('role') === 'nurse' ? 'nurse' : 'patient';
     const [isLogin, setIsLogin] = useState(true);
     const [formData, setFormData] = useState({ name: '', email: '', password: '', age: '', phone: '' });
+    const [selectedRole, setSelectedRole] = useState(initialRole);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [showMedicalForm, setShowMedicalForm] = useState(false);
@@ -50,6 +54,10 @@ const Login = () => {
         setIsLogin(false);
     };
 
+    React.useEffect(() => {
+        setIsLogin(initialMode);
+    }, [initialMode]);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!isLogin && !agreedToTerms) {
@@ -64,15 +72,23 @@ const Login = () => {
                 speakText(t('login.btn_login'));
                 const res = await authAPI.login({ email: formData.email, password: formData.password });
                 login({ ...res.data.user, token: res.data.access_token });
-                navigate('/');
+                if (res.data.user?.role === 'nurse') {
+                    navigate('/nurse/dashboard');
+                } else {
+                    navigate('/');
+                }
             } else {
                 speakText(t('login.btn_register'));
                 const res = await authAPI.register({
                     name: formData.name, email: formData.email, password: formData.password,
-                    age: formData.age ? parseInt(formData.age) : null, phone: formData.phone
+                    age: formData.age ? parseInt(formData.age) : null, phone: formData.phone, role: selectedRole
                 });
                 login({ ...res.data.user, token: res.data.access_token });
-                setShowMedicalForm(true);
+                if (selectedRole === 'patient') {
+                    setShowMedicalForm(true);
+                } else {
+                    navigate('/nurse/dashboard');
+                }
             }
         } catch (err) {
             const msg = err.response?.data?.detail || "An error occurred";
@@ -217,6 +233,28 @@ const Login = () => {
                     </div>
 
                     {!isLogin && (
+                        <div className="input-group mt-2">
+                            <label className="label">Register As</label>
+                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                <button
+                                    type="button"
+                                    className={`btn ${selectedRole === 'patient' ? 'btn-primary' : 'btn-outline'}`}
+                                    onClick={() => setSelectedRole('patient')}
+                                >
+                                    Patient
+                                </button>
+                                <button
+                                    type="button"
+                                    className={`btn ${selectedRole === 'nurse' ? 'btn-primary' : 'btn-outline'}`}
+                                    onClick={() => setSelectedRole('nurse')}
+                                >
+                                    Nurse
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {!isLogin && selectedRole === 'patient' && (
                         <div className="grid-2 mt-2">
                             <div className="input-group" style={{ marginBottom: 0 }}>
                                 <label className="label">{t('login.age')}</label>

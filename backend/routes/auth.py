@@ -18,6 +18,7 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 SECRET_KEY = os.getenv("SECRET_KEY", "scan4elders-secret-key-change-in-production")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 1440  # 24 hours
+ALLOWED_ROLES = {"patient", "nurse", "doctor"}
 
 
 class UserRegister(BaseModel):
@@ -99,7 +100,7 @@ async def register(user_data: UserRegister, db: Session = Depends(get_db)):
         password_hash=hashed_password,
         age=user_data.age,
         phone=user_data.phone,
-        role=user_data.role or "patient"
+        role=user_data.role if user_data.role in ALLOWED_ROLES else "patient"
     )
     db.add(new_user)
     db.commit()
@@ -183,6 +184,8 @@ async def update_profile(
     if user_update.phone is not None:
         user.phone = user_update.phone
     if user_update.role is not None:
+        if user_update.role not in ALLOWED_ROLES:
+            raise HTTPException(status_code=400, detail="Invalid role")
         user.role = user_update.role
     if user_update.accessibility_large_font is not None:
         user.accessibility_large_font = user_update.accessibility_large_font

@@ -135,6 +135,7 @@ function App() {
     };
 
     const role = user?.role || 'patient';
+    const rootPage = !user ? <Home /> : (role === 'nurse' ? <NurseDashboard /> : <Dashboard />);
 
     return (
         <AppContext.Provider value={contextValue}>
@@ -143,7 +144,7 @@ function App() {
                     <Navbar />
                     <main className="container animate-fade-in" style={{ paddingBottom: '4rem', paddingTop: '2rem' }}>
                         <Routes>
-                            <Route path="/" element={user ? <Dashboard /> : <Home />} />
+                            <Route path="/" element={rootPage} />
                             <Route path="/role-selection" element={<RoleSelection />} />
                             <Route path="/blind-assistant" element={<BlindAssistant />} />
                             <Route path="/login" element={<Login />} />

@@ -1,12 +1,12 @@
 import React, { useContext } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AppContext } from '../App';
-import { Activity, Camera, ScanLine, History, User as UserIcon, PhoneCall, Bell, CalendarDays, ClipboardList, Receipt } from 'lucide-react';
+import { Activity, Camera, ScanLine, History, User as UserIcon, PhoneCall, Bell, CalendarDays, ClipboardList, Receipt, LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import './Navbar.css';
 
 const Navbar = () => {
-    const { user, speakText } = useContext(AppContext);
+    const { user, speakText, logout } = useContext(AppContext);
     const navigate = useNavigate();
     const location = useLocation();
     const { t } = useTranslation();
@@ -25,6 +25,12 @@ const Navbar = () => {
             speakText('No caretaker phone number found. Please add one in your profile.');
             alert('No caretaker phone number found. Please add one in your profile.');
         }
+    };
+
+    const handleLogout = () => {
+        speakText('Logging out');
+        logout();
+        navigate('/');
     };
 
     const isNurse = user?.role === 'nurse';
@@ -95,6 +101,18 @@ const Navbar = () => {
                             >
                                 <PhoneCall size={20} />
                                 <span className="nav-text font-bold">Emergency</span>
+                            </button>
+                        )}
+
+                        {isNurse && (
+                            <button
+                                onClick={handleLogout}
+                                className="btn btn-ghost nav-link logout-btn hover:bg-slate-100 hover:text-slate-900"
+                                style={{ color: '#334155' }}
+                                onMouseEnter={() => speakText('Logout')}
+                            >
+                                <LogOut size={20} />
+                                <span className="nav-text font-bold">Logout</span>
                             </button>
                         )}
                     </div>

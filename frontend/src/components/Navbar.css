@@ -1,0 +1,141 @@
+.navbar {
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+    transition: all var(--transition-normal);
+}
+
+[data-theme='dark'] .navbar {
+    background-color: rgba(15, 23, 42, 0.85);
+    border-bottom-color: rgba(255, 255, 255, 0.05);
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 4.5rem;
+    padding: 0 2rem;
+    margin: 0 auto;
+    max-width: 1400px;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: var(--font-heading);
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: var(--primary-color);
+    letter-spacing: -0.03em;
+    animation: slideDown 0.4s ease-out forwards;
+}
+
+.brand-icon {
+    width: 32px;
+    height: 32px;
+    color: var(--primary-color);
+    animation: bounce 2s infinite;
+}
+
+.nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0.625rem 1rem;
+    border-radius: 1rem;
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s ease-out;
+}
+
+.nav-link:hover {
+    color: var(--primary-color);
+    background-color: var(--primary-light);
+    transform: translateY(-2px);
+}
+
+.nav-link:hover::before {
+    left: 100%;
+}
+
+.nav-link.active {
+    color: var(--primary-color);
+    background-color: var(--primary-light);
+    box-shadow: 0 0 0 2px var(--primary-color);
+    font-weight: 700;
+}
+
+.logout-btn {
+    transition: all var(--transition-normal);
+}
+
+.logout-btn:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+}
+
+@media (max-width: 1024px) {
+    .nav-text {
+        display: none;
+    }
+
+    .navbar-container {
+        padding: 0 1rem;
+    }
+
+    .navbar-brand span {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar-container {
+        height: 4rem;
+        padding: 0 0.75rem;
+    }
+
+    .nav-menu {
+        gap: 0.5rem;
+    }
+
+    .nav-link {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+    }
+
+    .navbar-brand {
+        font-size: 1.4rem;
+    }
+
+    .brand-icon {
+        width: 28px;
+        height: 28px;
+    }
+}

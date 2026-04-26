@@ -49,10 +49,10 @@ const NursePatientMedications = () => {
             <div className="card p-6" style={{ marginTop: '1rem' }}>
                 <h3>Add Medication</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <input className="input" placeholder="Medicine name" value={form.medicine_name} onChange={(e) => setForm((p) => ({ ...p, medicine_name: e.target.value }))} />
-                    <input className="input" placeholder="Dosage" value={form.dosage} onChange={(e) => setForm((p) => ({ ...p, dosage: e.target.value }))} />
-                    <input className="input" placeholder="Frequency (e.g. daily)" value={form.frequency} onChange={(e) => setForm((p) => ({ ...p, frequency: e.target.value }))} />
-                    <input className="input" placeholder="Times comma separated e.g. 08:00,20:00" value={form.times} onChange={(e) => setForm((p) => ({ ...p, times: e.target.value }))} />
+                    <input id="medicineName" name="medicineName" className="input" placeholder="Medicine name" value={form.medicine_name} onChange={(e) => setForm((p) => ({ ...p, medicine_name: e.target.value }))} />
+                    <input id="medicineDosage" name="medicineDosage" className="input" placeholder="Dosage" value={form.dosage} onChange={(e) => setForm((p) => ({ ...p, dosage: e.target.value }))} />
+                    <input id="medicineFrequency" name="medicineFrequency" className="input" placeholder="Frequency (e.g. daily)" value={form.frequency} onChange={(e) => setForm((p) => ({ ...p, frequency: e.target.value }))} />
+                    <input id="medicineTimes" name="medicineTimes" className="input" placeholder="Times comma separated e.g. 08:00,20:00" value={form.times} onChange={(e) => setForm((p) => ({ ...p, times: e.target.value }))} />
                 </div>
                 <button className="btn btn-primary" style={{ marginTop: '0.75rem' }} onClick={addMedication}>Add</button>
             </div>

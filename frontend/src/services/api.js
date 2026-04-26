@@ -24,7 +24,8 @@ export const authAPI = {
     login: (data) => api.post('/auth/login', data),
     register: (data) => api.post('/auth/register', data),
     getProfile: () => api.get('/auth/profile'),
-    updateProfile: (data) => api.put('/auth/profile', data)
+    updateProfile: (data) => api.put('/auth/profile', data),
+    listUsers: (role) => api.get(`/auth/users${role ? `?role=${role}` : ''}`),
 };
 
 export const prescriptionAPI = {
@@ -70,7 +71,10 @@ export const voiceAPI = {
 export const appointmentAPI = {
     book: (data) => api.post('/appointments/book', data),
     getMy: () => api.get('/appointments/my'),
-    getSlots: (doctorId, appointmentDate) => api.get(`/appointments/slots?doctor_id=${doctorId}&appointment_date=${appointmentDate}`),
+    getSlots: (doctorId, appointmentDate) => {
+        const doctorQuery = doctorId ? `doctor_id=${doctorId}&` : '';
+        return api.get(`/appointments/slots?${doctorQuery}appointment_date=${appointmentDate}`);
+    },
     updateStatus: (id, status) => api.patch(`/appointments/${id}/status`, { status }),
 };
 

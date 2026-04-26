@@ -151,7 +151,7 @@ function App() {
                             <Route path="/upload" element={user ? <UploadPrescription /> : <Navigate to="/login" />} />
                             <Route path="/scan" element={user ? <ScanMedicine /> : <Navigate to="/login" />} />
                             <Route path="/history" element={user ? <MedicineHistory /> : <Navigate to="/login" />} />
-                            <Route path="/profile" element={user ? <Profile /> : <Navigate to="/login" />} />
+                            <Route path="/profile" element={user && role !== 'nurse' ? <Profile /> : <Navigate to="/" />} />
                             <Route path="/privacy" element={<Privacy />} />
                             <Route path="/select-concern" element={user ? <SelectConcern /> : <Navigate to="/login" />} />
                             <Route path="/book-appointment" element={user && role === 'patient' ? <BookAppointment /> : <Navigate to="/" />} />

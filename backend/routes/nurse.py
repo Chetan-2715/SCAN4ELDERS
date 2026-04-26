@@ -63,12 +63,26 @@ async def nurse_bookings(
             raise HTTPException(status_code=400, detail="Invalid date format")
 
     rows = query.order_by(Appointment.appointment_date.asc(), Appointment.slot_start.asc()).limit(200).all()
+
+    user_cache = {}
+    def get_name(user_id: int | None):
+        if user_id is None:
+            return None
+        if user_id in user_cache:
+            return user_cache[user_id]
+        user = db.query(User).filter(User.id == user_id).first()
+        name = user.name if user else None
+        user_cache[user_id] = name
+        return name
+
     return {
         "bookings": [
             {
                 "id": row.id,
                 "patient_id": row.patient_id,
+                "patient_name": get_name(row.patient_id),
                 "doctor_id": row.doctor_id,
+                "doctor_name": get_name(row.doctor_id),
                 "appointment_date": str(row.appointment_date),
                 "slot_start": row.slot_start.strftime("%H:%M"),
                 "slot_end": row.slot_end.strftime("%H:%M"),

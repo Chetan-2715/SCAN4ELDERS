@@ -128,6 +128,8 @@ async def my_appointments(
                 "id": appt.id,
                 "patient_id": appt.patient_id,
                 "doctor_id": appt.doctor_id,
+                "patient_name": (db.query(User).filter(User.id == appt.patient_id).first().name if appt.patient_id else None),
+                "doctor_name": (db.query(User).filter(User.id == appt.doctor_id).first().name if appt.doctor_id else None),
                 "appointment_date": str(appt.appointment_date),
                 "slot_start": appt.slot_start.strftime("%H:%M"),
                 "slot_end": appt.slot_end.strftime("%H:%M"),
@@ -140,17 +142,22 @@ async def my_appointments(
 
 
 @router.get("/slots")
-async def available_slots(doctor_id: int, appointment_date: str, db: Session = Depends(get_db)):
+async def available_slots(doctor_id: int | None = None, appointment_date: str = "", db: Session = Depends(get_db)):
+    if not appointment_date:
+        raise HTTPException(status_code=400, detail="appointment_date is required")
+
     try:
         day = datetime.strptime(appointment_date, "%Y-%m-%d").date()
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid date format")
 
-    templates = db.query(SlotTemplate).filter(
-        SlotTemplate.doctor_id == doctor_id,
-        SlotTemplate.day_of_week == day.weekday(),
-        SlotTemplate.is_active.is_(True),
-    ).all()
+    templates = []
+    if doctor_id is not None:
+        templates = db.query(SlotTemplate).filter(
+            SlotTemplate.doctor_id == doctor_id,
+            SlotTemplate.day_of_week == day.weekday(),
+            SlotTemplate.is_active.is_(True),
+        ).all()
 
     candidate_slots = []
     if templates:
@@ -166,11 +173,15 @@ async def available_slots(doctor_id: int, appointment_date: str, db: Session = D
             e = s + timedelta(minutes=30)
             candidate_slots.append({"slot_start": s.strftime("%H:%M"), "slot_end": e.strftime("%H:%M")})
 
-    booked = db.query(Appointment).filter(
-        Appointment.doctor_id == doctor_id,
+    booked_query = db.query(Appointment).filter(
         Appointment.appointment_date == day,
         Appointment.status.in_(["booked", "confirmed"]),
-    ).all()
+    )
+    if doctor_id is None:
+        booked_query = booked_query.filter(Appointment.doctor_id.is_(None))
+    else:
+        booked_query = booked_query.filter(Appointment.doctor_id == doctor_id)
+    booked = booked_query.all()
 
     booked_starts = {b.slot_start.strftime("%H:%M") for b in booked}
     available = [slot for slot in candidate_slots if slot["slot_start"] not in booked_starts]

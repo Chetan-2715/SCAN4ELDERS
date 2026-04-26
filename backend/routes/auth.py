@@ -1,7 +1,7 @@
 """
 Authentication routes for user registration and login.
 """
-from fastapi import APIRouter, Depends, HTTPException, status, Header
+from fastapi import APIRouter, Depends, HTTPException, status, Header, Query
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, EmailStr
@@ -249,4 +249,36 @@ async def get_profile(
         "caretaker_email": user.caretaker_email,
         "caretaker_phone": user.caretaker_phone,
         "caretaker_relation": user.caretaker_relation,
+    }
+
+
+@router.get("/users")
+async def list_users(
+    role: str | None = Query(None),
+    auth: HTTPAuthorizationCredentials = Depends(security),
+    db: Session = Depends(get_db)
+):
+    token = auth.credentials
+    current_user_id = get_current_user_id(token)
+    current_user = db.query(User).filter(User.id == current_user_id).first()
+    if not current_user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    query = db.query(User)
+    if role:
+        if role not in ALLOWED_ROLES:
+            raise HTTPException(status_code=400, detail="Invalid role filter")
+        query = query.filter(User.role == role)
+
+    users = query.order_by(User.name.asc()).limit(200).all()
+    return {
+        "users": [
+            {
+                "id": u.id,
+                "name": u.name,
+                "email": u.email,
+                "role": u.role,
+            }
+            for u in users
+        ]
     }

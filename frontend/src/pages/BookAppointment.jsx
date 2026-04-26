@@ -1,11 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AppContext } from '../App';
-import { appointmentAPI } from '../services/api';
+import { appointmentAPI, authAPI } from '../services/api';
 
 const BookAppointment = () => {
     const { user, speakText } = useContext(AppContext);
     const [date, setDate] = useState('');
     const [doctorId, setDoctorId] = useState('');
+    const [doctors, setDoctors] = useState([]);
     const [reason, setReason] = useState('');
     const [slots, setSlots] = useState([]);
     const [selectedSlot, setSelectedSlot] = useState(null);
@@ -24,13 +25,14 @@ const BookAppointment = () => {
     useEffect(() => {
         if (user?.role === 'patient') {
             loadMyBookings();
+            authAPI.listUsers('doctor').then((res) => setDoctors(res.data.users || [])).catch(() => setDoctors([]));
         }
     }, [user?.role]);
 
     const fetchSlots = async () => {
-        if (!date || !doctorId) return;
+        if (!date) return;
         try {
-            const res = await appointmentAPI.getSlots(Number(doctorId), date);
+            const res = await appointmentAPI.getSlots(doctorId ? Number(doctorId) : null, date);
             setSlots(res.data.slots || []);
             setMessage('Slots loaded. Choose one to book.');
         } catch (err) {
@@ -42,7 +44,7 @@ const BookAppointment = () => {
         if (!selectedSlot || !date) return;
         try {
             await appointmentAPI.book({
-                doctor_id: Number(doctorId),
+                doctor_id: doctorId ? Number(doctorId) : null,
                 appointment_date: date,
                 slot_start: selectedSlot.slot_start,
                 slot_end: selectedSlot.slot_end,
@@ -68,12 +70,17 @@ const BookAppointment = () => {
             <div className="card p-6" style={{ marginBottom: '1rem' }}>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                        <label className="label">Doctor ID</label>
-                        <input className="input" value={doctorId} onChange={(e) => setDoctorId(e.target.value)} placeholder="Enter doctor user ID" />
+                        <label htmlFor="doctorId" className="label">Doctor</label>
+                        <select id="doctorId" name="doctorId" className="input" value={doctorId} onChange={(e) => setDoctorId(e.target.value)}>
+                            <option value="">General consultation (no specific doctor)</option>
+                            {doctors.map((doctor) => (
+                                <option key={doctor.id} value={doctor.id}>{doctor.name} ({doctor.email})</option>
+                            ))}
+                        </select>
                     </div>
                     <div>
-                        <label className="label">Date</label>
-                        <input className="input" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+                        <label htmlFor="appointmentDate" className="label">Date</label>
+                        <input id="appointmentDate" name="appointmentDate" className="input" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
                     </div>
                     <div style={{ display: 'flex', alignItems: 'end' }}>
                         <button className="btn btn-primary" onClick={fetchSlots}>Load Slots</button>
@@ -81,8 +88,8 @@ const BookAppointment = () => {
                 </div>
 
                 <div style={{ marginTop: '1rem' }}>
-                    <label className="label">Reason for Visit</label>
-                    <textarea className="input" rows="3" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Optional reason" />
+                    <label htmlFor="visitReason" className="label">Reason for Visit</label>
+                    <textarea id="visitReason" name="visitReason" className="input" rows="3" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Optional reason" />
                 </div>
 
                 {slots.length > 0 && (

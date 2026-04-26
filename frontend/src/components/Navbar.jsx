@@ -43,7 +43,6 @@ const Navbar = () => {
         { path: '/nurse/dashboard', name: 'Nurse Dashboard', icon: ClipboardList },
         { path: '/nurse/billing', name: 'Billing', icon: Receipt },
         { path: '/notifications', name: 'Notifications', icon: Bell },
-        { path: '/profile', name: t('app.profile'), icon: UserIcon },
     ];
 
     const navItems = isNurse ? nurseItems : patientItems;
@@ -87,15 +86,17 @@ const Navbar = () => {
                                 </Link>
                             );
                         })}
-                        <button
-                            onClick={handleEmergencyCall}
-                            className="btn btn-ghost nav-link logout-btn text-red-600 hover:bg-red-50 hover:text-red-700"
-                            style={{ color: '#dc2626' }}
-                            onMouseEnter={() => speakText("Emergency Alert Call Caretaker")}
-                        >
-                            <PhoneCall size={20} />
-                            <span className="nav-text font-bold">Emergency</span>
-                        </button>
+                        {!isNurse && (
+                            <button
+                                onClick={handleEmergencyCall}
+                                className="btn btn-ghost nav-link logout-btn text-red-600 hover:bg-red-50 hover:text-red-700"
+                                style={{ color: '#dc2626' }}
+                                onMouseEnter={() => speakText("Emergency Alert Call Caretaker")}
+                            >
+                                <PhoneCall size={20} />
+                                <span className="nav-text font-bold">Emergency</span>
+                            </button>
+                        )}
                     </div>
                 ) : (
                     <div className="nav-menu">
